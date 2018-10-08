@@ -154,14 +154,15 @@ void DOB_axis_1::run()
 
     if (start_time > end_time)
         end_time += 32767;
-    h = static_cast<double>(end_time - start_time) * 0.001;
+    double h_save = static_cast<double>(end_time - start_time) * 0.001;
     h = 0.001;
 
     double g_q = m*g*L*qSin(q1);
     double p = 0.5*m*L*L*q1_dot*q1_dot;
     Tg = -m*g*L*qSin(q1);
 
-    yp = torque - r_hat + g_q;
+    torque_cur = torque;
+    yp = torque - Tg - r_hat + g_q;
 
     y = y_old + yp_old*h + h*0.5*(yp - yp_old);
 
@@ -189,7 +190,7 @@ void DOB_axis_1::run()
         collision = true;
     }
 
-    t += h;
+    t += h_save;
 
     dxlControl.setLEDoff();
 }
@@ -230,6 +231,14 @@ DOB_axis_1::~DOB_axis_1()
 
 void DOB_axis_1::on_btnQuit_clicked()
 {
+    FILE *fp;
+    fopen_s(&fp, "../dob_data.txt","w+");
+    uint8_t length = static_cast<uint8_t>(x_pos.size());
+    for(uint8_t i = 0; i < length; i++){
+        fprintf(fp, "%.5f\t%10.10f\t%10.10f\t%10.10f\t%10.10f\n", x_pos[i], y_pos[i], y_torque[i], y_current[i], y_r[i]);
+    }
+    fclose(fp);
+
     this->close();
 }
 

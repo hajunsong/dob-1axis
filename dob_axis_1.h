@@ -89,6 +89,8 @@ private:
     bool CCW = true;
     bool stop = false;
 
+    double torque_prev = 0, torque_cur = 0;
+
     QVector<double> x_pos, y_pos, x_r, y_r, x_torque, y_torque, x_current, y_current;
 };
 
