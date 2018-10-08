@@ -118,7 +118,7 @@ phony.c
 /doc/qtcreator/
 /doc/qtcreator-dev/
 /doc/pluginhowto/html/
-/lib/
+#/lib/
 /lib64/
 /libexec/
 debug/
