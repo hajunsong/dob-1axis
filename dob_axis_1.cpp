@@ -68,7 +68,7 @@ void DOB_axis_1::init()
     err_vel_accum = 0;
     err_vel_prev = 0;
 
-    K = 1000;
+    K = 1500;
     threshN = -5.3;
     threshP = 4.5;
 
@@ -143,6 +143,15 @@ void DOB_axis_1::run()
 
     current = dxlControl.getPresentCurrent();	// Read Present Current [A]
     voltage = dxlControl.getPresentVoltage();	// Read Present Voltage [V]
+
+    uint16_t Kp_vel, Ki_vel;
+    Kp_vel = dxlControl.getVelocityPGain();
+    Ki_vel = dxlControl.getVelocityIGain();
+    err_vel = des_vel - q1_dot;
+    err_vel_accum = err_vel_accum + err_vel*h;
+    double T_control = Kp_vel*err_vel + Ki_vel*err_vel_accum;
+    err_vel_prev = err_vel;
+    cout << ((T_control -m*g*L*qSin(q1)) / TORQUE_CONSTANT / GEAR_RATIO) << endl;
 
     if (!stop)
         input_torque = static_cast<int16_t>(current*1000);

@@ -208,3 +208,15 @@ uint16_t DxlControl::getRealtimeTick() {
 	packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_REALTIME_TICK, &time_tick, &dxl_error);
 	return time_tick;
 }
+
+uint16_t DxlControl::getVelocityIGain(){
+    uint16_t Igain = 0;
+    packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_VELOCITY_IGAIN, &Igain, &dxl_error);
+    return Igain;
+}
+
+uint16_t DxlControl::getVelocityPGain(){
+    uint16_t Pgain = 0;
+    packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_VELOCITY_PGAIN, &Pgain, &dxl_error);
+    return Pgain;
+}

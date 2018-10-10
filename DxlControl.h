@@ -81,6 +81,8 @@ public:
 	double getPresentVoltage();
     uint8_t getOperateMode();
 	uint16_t getRealtimeTick();
+    uint16_t getVelocityPGain();
+    uint16_t getVelocityIGain();
 
 	dynamixel::PortHandler *portHandler;
 	dynamixel::PacketHandler *packetHandler;
