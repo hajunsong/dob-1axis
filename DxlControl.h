@@ -38,9 +38,9 @@ constexpr auto ADDR_REALTIME_TICK = 568;
 constexpr auto PROTOCOL_VERSION = 2.0;
 
 // Default setting
-constexpr auto DXL_ID = 1;		// Is different in Dynamixel
-constexpr auto BAUDRATE = 57600;	// Is different in Dynamixel
-constexpr auto DEVICENAME = "COM5";	// Is different in PC
+constexpr auto DXL_ID = 3;		// Is different in Dynamixel
+constexpr auto BAUDRATE = 1000000;	// Is different in Dynamixel
+constexpr auto DEVICENAME = "COM3";	// Is different in PC
 
 constexpr auto TORQUE_ENABLE = 1;
 constexpr auto TORQUE_DISABLE = 0;
