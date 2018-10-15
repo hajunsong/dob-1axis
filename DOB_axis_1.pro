@@ -42,6 +42,14 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+#win32: LIBS += -L$$PWD/lib/ -ldxl_x64_cpp
+
+#INCLUDEPATH += $$PWD/include
+#DEPENDPATH += $$PWD/include
+
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/dxl_x64_cpp.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/libdxl_x64_cpp.a
+
 win32: LIBS += -L$$PWD/lib/ -ldxl_x64_cpp
 
 INCLUDEPATH += $$PWD/include

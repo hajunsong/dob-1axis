@@ -57,6 +57,7 @@ int DxlControl::dxl_init()
 	// Write Dynamixel Baud rate
 //    packetHandler->write1ByteTxRx(portHandler, DXL_ID, 8, 3, &dxl_error);
 
+    // Write Dynamixel ID
 //    packetHandler->write1ByteTxRx(portHandler, DXL_ID, 7, 4, &dxl_error);
 
 	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_RED, 0, &dxl_error);
