@@ -42,14 +42,14 @@ DOB_axis_1::DOB_axis_1(QWidget *parent) : QMainWindow(parent), ui(new Ui::DOB_ax
 
     dxlControl.dxl_init();
 
-    init();
+//    init();
 }
 
 void DOB_axis_1::init()
 {
     dxlControl.setOperateMode(position_mode);
     dxlControl.setHomePosition();
-    dxlControl.setOperateMode(velocity_mode);
+    dxlControl.setOperateMode(torque_mode);
 
     des_pos = 0;
     des_vel = 0;
@@ -69,8 +69,8 @@ void DOB_axis_1::init()
     err_vel_prev = 0;
 
     K = 1500;
-    threshN = -5.3;
-    threshP = 4.5;
+    threshN = -99915.3;
+    threshP = 9999;
 
     control = false;
     CCW = true;
@@ -125,8 +125,27 @@ void DOB_axis_1::run()
     uint16_t start_time = dxlControl.getRealtimeTick();
 
     int16_t input_torque = 0;
+//    const double des_vel_end = 0.7;
+    double delta_w = 2;
+    double t1 = 0.1;
+    double a = -2*delta_w/(t1*t1*t1);
+    double b = 3*delta_w/(t1*t1);
     if (!stop) {
-        dxlControl.setVelocity(static_cast<int32_t>(des_vel / (0.01*6.0 * M_PI) * 180));
+//        if (des_vel < des_vel_end){
+//            des_vel += 0.005;
+//        }
+//        else{
+//            des_vel = des_vel_end;
+//        }
+        if (t_profile <= t1)
+            des_vel = a*t_profile*t_profile*t_profile + b*t_profile*t_profile;
+        t_profile += 0.001;
+        des_vel *= 5;
+        cout << "des_vel : " << des_vel << endl;
+//        dxlControl.setVelocity(static_cast<int32_t>(des_vel / (0.01*6.0 * M_PI) * 180));
+        input_torque = static_cast<int16_t>((des_vel / TORQUE_CONSTANT / GEAR_RATIO) * 1000);
+        input_torque = input_torque > dxlControl.current_limit ? dxlControl.current_limit : input_torque < -dxlControl.current_limit ? -dxlControl.current_limit : input_torque;
+        dxlControl.setInputTorque(input_torque);
     }
     else {
         Tg = -m*g*L*qSin(q1);
@@ -144,15 +163,6 @@ void DOB_axis_1::run()
     current = dxlControl.getPresentCurrent();	// Read Present Current [A]
     voltage = dxlControl.getPresentVoltage();	// Read Present Voltage [V]
 
-    uint16_t Kp_vel, Ki_vel;
-    Kp_vel = dxlControl.getVelocityPGain();
-    Ki_vel = dxlControl.getVelocityIGain();
-    err_vel = des_vel - q1_dot;
-    err_vel_accum = err_vel_accum + err_vel*h;
-    double T_control = Kp_vel*err_vel + Ki_vel*err_vel_accum;
-    err_vel_prev = err_vel;
-    cout << ((T_control -m*g*L*qSin(q1)) / TORQUE_CONSTANT / GEAR_RATIO) << endl;
-
     if (!stop)
         input_torque = static_cast<int16_t>(current*1000);
 
@@ -166,12 +176,24 @@ void DOB_axis_1::run()
     double h_save = static_cast<double>(end_time - start_time) * 0.001;
     h = 0.001;
 
-    double g_q = m*g*L*qSin(q1);
-    double p = 0.5*m*L*L*q1_dot*q1_dot;
     Tg = -m*g*L*qSin(q1);
 
+    uint16_t Kp_vel, Ki_vel;
+    Kp_vel = dxlControl.getVelocityPGain();
+    Ki_vel = dxlControl.getVelocityIGain();
+    err_vel = des_vel - q1_dot;
+    err_vel_accum = err_vel_accum + err_vel*0.0005;
+    double T_control = Kp_vel*err_vel + Ki_vel*err_vel_accum;
+    err_vel_prev = err_vel;
+//    cout << ((T_control + Tg) / TORQUE_CONSTANT / GEAR_RATIO) << endl;
+
+    double g_q = m*g*L*qSin(q1);
+    double p = 0.5*m*L*L*q1_dot*q1_dot;
+
     torque_cur = torque;
-    yp = torque - Tg - r_hat + g_q;
+//    T_control = (T_control) / TORQUE_CONSTANT / GEAR_RATIO;
+//    cout << T_control << ", " << torque << " ," << Tg << endl;
+    yp = des_vel - r_hat + g_q;
 
     y = y_old + yp_old*h + h*0.5*(yp - yp_old);
 
@@ -242,8 +264,8 @@ void DOB_axis_1::on_btnQuit_clicked()
 {
     FILE *fp;
     fopen_s(&fp, "../dob_data.txt","w+");
-    uint8_t length = static_cast<uint8_t>(x_pos.size());
-    for(uint8_t i = 0; i < length; i++){
+    int length = static_cast<int>(x_pos.size());
+    for(int i = 0; i < length; i++){
         fprintf(fp, "%.5f\t%10.10f\t%10.10f\t%10.10f\t%10.10f\n", x_pos[i], y_pos[i], y_torque[i], y_current[i], y_r[i]);
     }
     fclose(fp);

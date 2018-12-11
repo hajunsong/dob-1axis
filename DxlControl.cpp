@@ -35,7 +35,7 @@ int DxlControl::dxl_init()
 
 	// Check Dynamixel Torque on or off
 	int torque = 0;
-	dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, reinterpret_cast<uint8_t*>(&torque), &dxl_error);
+    dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, 1, ADDR_TORQUE_ENABLE, reinterpret_cast<uint8_t*>(&torque), &dxl_error);
 	if (dxl_comm_result != COMM_SUCCESS) {
 		printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
 		return 0;
@@ -48,36 +48,75 @@ int DxlControl::dxl_init()
 		printf("Dynamixel has been successfully connected\n");
 	}
 
-	//cout << "torque enable : " << torque << endl;
-	if (torque == TORQUE_ENABLE) {
-		// Disable Dynamixel Torque
-		packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
-	}
+    dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, 2, ADDR_TORQUE_ENABLE, reinterpret_cast<uint8_t*>(&torque), &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        return 0;
+    }
+    else if (dxl_error != 0) {
+        printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+        return 0;
+    }
+    else {
+        printf("Dynamixel has been successfully connected\n");
+    }
 
-	// Write Dynamixel Baud rate
+    dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, 3, ADDR_TORQUE_ENABLE, reinterpret_cast<uint8_t*>(&torque), &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        return 0;
+    }
+    else if (dxl_error != 0) {
+        printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+        return 0;
+    }
+    else {
+        printf("Dynamixel has been successfully connected\n");
+    }
+
+    dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, 4, ADDR_TORQUE_ENABLE, reinterpret_cast<uint8_t*>(&torque), &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        return 0;
+    }
+    else if (dxl_error != 0) {
+        printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+        return 0;
+    }
+    else {
+        printf("Dynamixel has been successfully connected\n");
+    }
+
+	//cout << "torque enable : " << torque << endl;
+//	if (torque == TORQUE_ENABLE) {
+//		// Disable Dynamixel Torque
+//		packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
+//	}
+
+//    // Write Dynamixel Baud rate (1M bps)
 //    packetHandler->write1ByteTxRx(portHandler, DXL_ID, 8, 3, &dxl_error);
 
-    // Write Dynamixel ID
-//    packetHandler->write1ByteTxRx(portHandler, DXL_ID, 7, 4, &dxl_error);
+//    // Write Dynamixel ID
+////    packetHandler->write1ByteTxRx(portHandler, DXL_ID, 7, 4, &dxl_error);
 
-	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_RED, 0, &dxl_error);
-	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_GREEN, 255, &dxl_error);
-	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_BLUE, 0, &dxl_error);
+//	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_RED, 0, &dxl_error);
+//	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_GREEN, 255, &dxl_error);
+//	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_LED_BLUE, 0, &dxl_error);
 
-	// Write Dynamixel Operating mode
-    packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_OPERATING_MODE, OPERATING_VELOCITY_CONTROL, &dxl_error);
+//	// Write Dynamixel Operating mode
+//    packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_OPERATING_MODE, OPERATING_POSITION_CONTROL, &dxl_error);
 
-	packetHandler->write2ByteTxRx(portHandler, DXL_ID, ADDR_CURRENT_LIMIT, 4500, &dxl_error);
+////	packetHandler->write2ByteTxRx(portHandler, DXL_ID, ADDR_CURRENT_LIMIT, 4500, &dxl_error);
 
-	//uint8_t operating_mode = 0;
-	//packetHandler->read1ByteTxRx(portHandler, DXL_ID, ADDR_OPERATING_MODE, &operating_mode, &dxl_error);
-	//cout << "operating mode : " << (int)operating_mode << endl;
+//	//uint8_t operating_mode = 0;
+//	//packetHandler->read1ByteTxRx(portHandler, DXL_ID, ADDR_OPERATING_MODE, &operating_mode, &dxl_error);
+//	//cout << "operating mode : " << (int)operating_mode << endl;
 
-	// Enable Dynamixel Torque
-	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
+//	// Enable Dynamixel Torque
+//	packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
 
-	// Read Current Limit Max & Min
-	packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_CURRENT_LIMIT, reinterpret_cast<uint16_t*>(&current_limit), &dxl_error);
+//	// Read Current Limit Max & Min
+//    packetHandler->read2ByteTxRx(portHandler, DXL_ID, ADDR_CURRENT_LIMIT, reinterpret_cast<uint16_t*>(&current_limit), &dxl_error);
 	//cout << "current limit : " << current_limit << endl;
 
 	return 1;

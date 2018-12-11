@@ -51,6 +51,7 @@ private:
     double g = -9.80665;
 
     double t = 0.0;
+    double t_profile = 0.0;
     double h = 0.0;
 
     double q1 = 0;
